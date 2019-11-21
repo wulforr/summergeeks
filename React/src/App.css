@@ -1,0 +1,78 @@
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #e9e9e9;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* justify-content: center; */
+  font-size: 3rem;
+  color: #363636;
+  padding-top: 2%;
+}
+
+.form-background{
+  width: 30%;
+  background-color: white;
+  margin-top: 5%;
+  padding: 2% 1% 10% 1%;
+  border-radius: 1%;
+  box-shadow: 1px 1px 1px 1px gray;
+}
+.mainform {
+  /* height: 80%; */
+  /* width: 100%; */
+  /* background-color: white; */
+  color: #ed2553;
+  /* margin-top: 5%; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  /* padding: 2% 1% 10% 1%; */
+  /* border-radius: 1%; */
+  /* box-shadow: 1px 1px 1px 1px gray; */
+}
+
+
+input{
+  width: 80%;
+  height: 13%;
+  margin: 2%;
+  margin-top: 5%;
+  border: none;
+  border-bottom: 1px solid #333333;
+  background-color: white;
+  padding: 0%;
+}
+
+button{
+  /* display: block; */
+  width: 30%;
+  /* flex-basis: 100%; */
+  margin-top: 10%;
+  color: #363636;
+  background-color: #e9e9e9;
+  border: 2px solid gray;
+  font-size: 1.8rem;
+}
+button:hover{
+  border-color: #ed2553;
+  color: #ed2553;
+}
+
+/* #ed2553 */
+
+.Form-heading{
+  font-size: 0.75em;
+  align-self: flex-start;
+  justify-self: flex-start;
+  text-align: left;
+  border-left: 5px solid #ed2553;
+  padding-left: 5%;
+  margin-left: -3.3%;
+  color: #ed2553;
+}
