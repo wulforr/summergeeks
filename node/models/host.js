@@ -13,17 +13,10 @@ const userSchema = mongoose.Schema({
         type: Number,
         required: true
     },
-    address: {
+    city: {
         type: String 
-    },
-    TimeIn: {
-        type: Date,
-        default: Date.now
-    },
-    TimeOut: {
-        type: Date
     }
 })
 
-const visitor = mongoose.model("visitor", userSchema);
-module.exports = visitor
+const host = mongoose.model("host", userSchema);
+module.exports = host
