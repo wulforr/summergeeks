@@ -1,18 +1,22 @@
 const nodemailer = require("nodemailer");
 const Nexmo = require('nexmo');
+const apiKey = require("./config/keys").nexmoapiKey;
+const apiSecret = require("./config/keys").nexmoapiSecret;
+const User = require("./config/keys").nodemailerUser;
+const Pass = require("./config/keys").nodemailerPass;
 
 
 async function toHost(reciever, recieverNo, mailbody) {
     let transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'piyush.bhargav70@gmail.com',
-            pass: 'piyush@123#'
+            user: User,
+            pass: Pass
         }
     });
     const nexmo = new Nexmo({
-        apiKey: '97c06627',
-        apiSecret: 'KnoCRctvMc6w5up2',
+        apiKey: apiKey,
+        apiSecret: apiSecret,
     });
     //get date
     let k;
@@ -62,13 +66,13 @@ async function toVisitor(mailbody, hostdetails) {
     let transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'piyush.bhargav70@gmail.com',
-            pass: 'piyush@123#'
+            user: User,
+            pass: Pass
         }
     });
     const nexmo = new Nexmo({
-         apiKey: '97c06627',
-        apiSecret: 'KnoCRctvMc6w5up2',
+         apiKey: apiKey,
+        apiSecret: apiSecret,
     });
     //get date
     let k;
@@ -133,8 +137,8 @@ async function sendotp(number,otp) {
     const text = `Your OTP for checking out is ${otp} `
     console.log('sending text',text)
     const nexmo = new Nexmo({
-        apiKey: '97c06627',
-       apiSecret: 'KnoCRctvMc6w5up2',
+        apiKey: apiKey,
+       apiSecret: apiSecret,
    });
     nexmo.message.sendSms(from, to, text);
     console.log('text sent')
