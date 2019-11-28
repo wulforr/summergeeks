@@ -33,4 +33,5 @@ Made using
   <li>Nodemailer is used for sending email</li>
   <li>Nexmo is used for sending text</li>
   <li>All the api keys are in config folder which is not uploaded on github</li>
+  <li>All the screenshots are in images folder</li>
 </ul>
