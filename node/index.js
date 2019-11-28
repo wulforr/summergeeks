@@ -46,7 +46,6 @@ app.get("/",(req,res)=>{
 // The checkin Route
 app.post('/checkin', (req,res) => {
 
-    // console.log(req)
     // Adding the details of visitor to database
     const newVisitor = new visitor({
         name:req.body.name,
@@ -65,7 +64,6 @@ app.post('/checkin', (req,res) => {
             res.status(200).json(ans)
         })
         .catch(err => res.status(400).json(err))
-        // console.log(req.body.hostdetails)
         
     })
     .catch(err => res.status(400).json(err))
@@ -77,15 +75,15 @@ app.post('/checkout', (req,res) => {
     // Finding the visitor using its id and then updating the checkout time in it
     visitor.find({_id:req.body.id})
     .then(intern => {
-        console.log(intern,intern[0].OTP,req.body)
+        // Checking the otp entered
         if(intern[0].OTP == req.body.otp)
         {
             visitor.updateOne({_id:req.body.id},{$set:{TimeOut:Date.now()}})
             .then(user => {
-                console.log(intern[0].hostid)
+                // finding the user who interviewed the visitor
                 host.find({_id:intern[0].hostid})
                 .then(host => {
-                    console.log(host)
+                    // sending info of visitor and host to send email and text
                     sendinfo.toVisitor(intern[0],host[0])
                     res.json(user)
                 })
@@ -93,6 +91,7 @@ app.post('/checkout', (req,res) => {
             })
             .catch(err => res.json(err))
         }
+        // If the otp doesnt match then send error 
         else
             res.status(202).json('didnt match')
     })
@@ -124,7 +123,7 @@ app.post('/sendotp',(req,res) => {
         return OTP; 
     } 
     var otp = generateOTP()
-    console.log(otp)
+    // Entering the otp in visitors database
     visitor.find({_id:req.body.id})
     .then(intern => {
         console.log('found')
