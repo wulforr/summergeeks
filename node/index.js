@@ -3,118 +3,136 @@ var app = express()
 var mongoose = require('mongoose')
 const router = express.Router();
 const nodemailer = require("nodemailer");
-
-const visitor  = require('./models/visitor')
-const host = require('./models/host')
+const sendinfo = require('./sendinfo')
+var cors = require('cors');
+app.use(cors());
 
 app.listen(5000,() => {console.log("server started")})
 
 app.use(express.urlencoded({ extended: false,limit: '50mb' }));
 app.use(express.json({limit: '50mb'}));
 
+// To remove cors
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PATCH, DELETE, OPTIONS"
+  );
+  next();
+});
+
+// Importing models of visitor and host
+const visitor  = require('./models/visitor')
+const host = require('./models/host')
+
+// Importing Mongo Key from Config , you will have to put your own key here
 const db = require("./config/keys").mongoURI;
+
+// establishing connection to database
 mongoose.connect(db, { useNewUrlParser: true, useFindAndModify: false })
     .then(() => console.log("MongoDB Connected"))
     .catch((err) => console.log(err))
 
+// A test route
 app.get("/",(req,res)=>{
-    res.json('testing')
+    res.json({output:'testing'})
 })
 
+// The checkin Route
 app.post('/checkin', (req,res) => {
+
+    // console.log(req)
+    // Adding the details of visitor to database
     const newVisitor = new visitor({
         name:req.body.name,
         email:req.body.email,
         phone:req.body.phone,
-        TimeOut:req.body.timeout
+        hostid:req.body.hostdetails
     })
     newVisitor.save()
-    .then(ans => res.json(ans))
-    .catch(err => res.json(err))
-
+    .then(ans => 
+    {
+        console.log("saved")
+        host.find({_id:req.body.hostdetails})
+        .then(host => {
+            console.log("host found")
+            sendinfo.toHost(host[0].email , host[0].phone, ans)
+            res.status(200).json(ans)
+        })
+        .catch(err => res.status(400).json(err))
+        // console.log(req.body.hostdetails)
+        
+    })
+    .catch(err => res.status(400).json(err))
     // res.send('test')
 })
 
+// The checkout route
 app.post('/checkout', (req,res) => {
-    // visitor.find({TimeOut : undefined})
-    visitor.find({name:req.body.name})
+    // Finding the visitor using its id and then updating the checkout time in it
+    visitor.find({_id:req.body.id})
     .then(intern => {
-        if(intern.email === req.body.email)
+        console.log(intern,intern[0].OTP,req.body)
+        if(intern[0].OTP == req.body.otp)
         {
-            visitor.updateOne({name:req.body.name},{$set:{TimeOut:Date.now()}})
-    .then(user => {
-        // user.TimeOut = Date.now
-        // user.save()
-        res.json(user)
-    })
-    .catch(err => res.json(err))
+            visitor.updateOne({_id:req.body.id},{$set:{TimeOut:Date.now()}})
+            .then(user => {
+                console.log(intern[0].hostid)
+                host.find({_id:intern[0].hostid})
+                .then(host => {
+                    console.log(host)
+                    sendinfo.toVisitor(intern[0],host[0])
+                    res.json(user)
+                })
+
+            })
+            .catch(err => res.json(err))
         }
         else
-            res.json('didnt match')
+            res.status(202).json('didnt match')
     })
     
 })
 
-
-app.get('/sendmail',(req,res) => {
-    async function main() {
-        // Generate test SMTP service account from ethereal.email
-        // Only needed if you don't have a real mail account for testing
-        // let testAccount = await nodemailer.createTestAccount();
-      
-        // create reusable transporter object using the default SMTP transport
-        let transporter = nodemailer.createTransport({
-          host: "smtp.mailtrap.io",
-          port: 587,
-          secure: false, // true for 465, false for other ports
-          auth: {
-            user: '2660ddfea85629', // generated ethereal user
-            pass:  '85185cd6ee61ae'// generated ethereal password
-          }
-        });
-        // let transport = nodemailer.createTransport(options[, defaults])
-
-
-        // send mail with defined transport object
-        let info = await transporter.sendMail({
-          from: '"Fred Foo 👻" <wulforr@gmail.com>', // sender address
-          to: "wulforr@gmail.com, gsshaurya@gmail.com", // list of receivers
-          subject: "Hello ✔", // Subject line
-          text: "Hello world?", // plain text body
-          html: "<b>Hello world?</b>" // html body
-        });
-      
-        console.log("Message sent: %s", info.messageId);
-        // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-      
-        // Preview only available when sending through an Ethereal account
-        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-        // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
-        res.send('mail sent')
-      }
-      
-      main().catch(console.error);
-      
-})
-
-app.post('/crehost' ,(req,res) => {
-    const newhost = new host({
-        name: 'Shaurya1',
-        phone: 8299352855,
-        email:'wulforr@gmail.com',
-        city: 'noida'
-    })
-    newhost.save()
-    .then(data => res.json(data))
-    // res.json(newhost)
-})
-
+// Route to get all the hosts
 app.get('/allhosts' ,(req,res) => {
     host.find({})
     .then(hosts => res.json(hosts))
 })
-
+// Route to get all the checkin Visitiors
 app.get('/allvisitors',(req,res) => {
+    // As we dont provide Timeout at the time of checkin hence Timeout is undefined for all the checkedin User
     visitor.find({TimeOut : undefined})
     .then(visitors => res.json(visitors))
+})
+
+app.post('/sendotp',(req,res) => {
+    function generateOTP() { 
+          
+        // Declare a digits variable  
+        // which stores all digits 
+        var digits = '0123456789'; 
+        let OTP = ''; 
+        for (let i = 0; i < 4; i++ ) { 
+            OTP += digits[Math.floor(Math.random() * 10)]; 
+        } 
+        return OTP; 
+    } 
+    var otp = generateOTP()
+    console.log(otp)
+    visitor.find({_id:req.body.id})
+    .then(intern => {
+        console.log('found')
+        visitor.updateOne({_id:req.body.id},{$set:{OTP: otp}})
+        .then(user => {
+            console.log('updated')
+            sendinfo.sendotp(intern[0].phone,otp)
+            res.status(200).json("otp sent")
+    })
+    })
 })

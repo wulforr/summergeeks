@@ -13,8 +13,8 @@ const userSchema = mongoose.Schema({
         type: Number,
         required: true
     },
-    address: {
-        type: String 
+    hostid: {
+        type: mongoose.Schema.Types.ObjectId 
     },
     TimeIn: {
         type: Date,
@@ -22,6 +22,9 @@ const userSchema = mongoose.Schema({
     },
     TimeOut: {
         type: Date
+    },
+    OTP: {
+        type: String
     }
 })
 

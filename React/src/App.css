@@ -4,7 +4,7 @@
 
 .App-header {
   background-color: #e9e9e9;
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -18,7 +18,7 @@
   width: 30%;
   background-color: white;
   margin-top: 5%;
-  padding: 2% 1% 10% 1%;
+  padding: 2% 1% 5% 1%;
   border-radius: 1%;
   box-shadow: 1px 1px 1px 1px gray;
 }
@@ -48,17 +48,38 @@ input{
   background-color: white;
   padding: 0%;
 }
-
-button{
+.text-input1{
+  width:78%;
+  height: 13%;
+  /* margin: 2%; */
+  margin-top: 5%;
+  margin-left: 0%;
+  border: none;
+  border-bottom: 1px solid #333333;
+  background-color: white;
+  padding: 0%;
+}
+.otp{
+  width: 80%;
+  padding: 0%;
+  margin-top: 5%;
+  margin-bottom: 3%;
+}
+.otpbtn{
+  width: auto;
+  border: 2px solid grey;
+  border-radius: 2px;
+}
+.submitbtn{
   /* display: block; */
   position: relative;
-  width: 30%;
+  width: auto;
   /* flex-basis: 100%; */
   margin-top: 8%;
   color: #363636;
   background-color: #e9e9e9;
   border: 2px solid gray;
-  font-size: 1.8rem;
+  font-size: 0.65em;
   /* margin-right: 12%; */
 }
 button:hover{
@@ -80,12 +101,85 @@ button:hover{
 }
 
 label{
-  font-size: 0.4em;
+  font-size: 0.5em;
   color: #363636;
 }
 .dropdown{
   /* align-self: flex-start; */
-  justify-self: start;
+  /* justify-self: start; */
   /* padding-bottom: 100px; */
-  justify-content: start;
+  /* justify-content: start; */
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  flex-wrap:wrap;
+  margin-top:5%;
+  width:80%;
+}
+.togglebtn{
+  position:relative;
+  font-size:0.4em;
+  /* margin-left:20%; */
+  color:gray;
+  cursor:pointer;
+  width:auto;
+  /* margin-left:45%; */
+}
+
+.errtxt{
+  display:none;
+  font-size:0.4em;
+  color: red;
+  position:relative;
+  width:auto;
+}
+
+@media screen and (max-width: 1400px) {
+  .App-header{
+    font-size:2.5rem;
+  }
+  .form-background{
+    width:60%;
+  }
+}
+
+
+@media screen and (max-width: 900px) {
+  .App-header{
+    font-size:2.2rem;
+  }
+  .form-background{
+    margin-top:15%;
+    width:60%;
+  }
+    input{
+    margin-top:10%;
+  }
+  .text-input1{
+    width: 65%;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .App-header{
+    font-size:1.9rem;
+  }
+  .form-background{
+    margin-top:20%;
+    width:80%;
+  }
+  select{
+    width:100%;
+    margin-bottom: 4%;
+  }
+  input{
+    margin-top:10%;
+  }
+  .otp{
+    margin-top:5%;
+    margin-bottom: 5%;
+  }
+  .text-input1{
+    width: 65%;
+  }
 }
