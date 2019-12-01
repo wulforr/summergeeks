@@ -17,22 +17,34 @@ class CheckInForm extends Component {
             hosts: [{_id:123,name:"shaurya",city:"Noida"}],
             hostdetails: ''
         }
+        this.intervalId = 0;
     }
     componentDidMount(){
-        axios.get('http://localhost:5000/allhosts')
+        axios.get('https://innovaccer-node.herokuapp.com/allhosts')
         .then(res => this.setState({hosts:res.data}))
         .catch(err => console.log(err))
     }
     handleClick = () => {
         console.log(this.state.hostdetails)
+        var re = /\S+@\S+\.\S+/;
         if(this.state.Name ==='' || this.state.Phone === '' || this.state.hostdetails === {} || this.state.email === ''){
         document.getElementsByClassName('errtxt')[0].style.display = 'block';
         document.getElementsByClassName('errtxt')[0].innerText = "All the fields are required please fill all the fields"
         document.getElementsByClassName('errtxt')[0].style.color = 'red'
         }
+        else if(this.state.Phone.length !== 10){
+            document.getElementsByClassName('errtxt')[0].style.display = 'block';
+            document.getElementsByClassName('errtxt')[0].innerText = "Phone Number must be of 10 digits"
+            document.getElementsByClassName('errtxt')[0].style.color = 'red'
+        }
+        else if(!re.test(this.state.email)){
+            document.getElementsByClassName('errtxt')[0].style.display = 'block';
+            document.getElementsByClassName('errtxt')[0].innerText = "Enter a valid email address"
+            document.getElementsByClassName('errtxt')[0].style.color = 'red'
+        }
         else
         {
-            axios.post('http://localhost:5000/checkin',{name:this.state.Name, email:this.state.email,phone:this.state.Phone,hostdetails:this.state.hostdetails})
+            axios.post('https://innovaccer-node.herokuapp.com/checkin',{name:this.state.Name, email:this.state.email,phone:this.state.Phone,hostdetails:this.state.hostdetails})
             .then(res => {
                 console.log(res,res.status)
                 if(res.status ===200)
@@ -40,9 +52,9 @@ class CheckInForm extends Component {
                 document.getElementsByClassName('errtxt')[0].style.display = 'block';
                 document.getElementsByClassName('errtxt')[0].innerText = "You have been successfully checkedIn"
                 document.getElementsByClassName('errtxt')[0].style.color = 'green'
-                setInterval(() => {
+                this.intervalId = setInterval(() => {
                 document.getElementsByClassName('errtxt')[0].style.display = 'none';
-                }, 2000)
+                }, 4000)
                 }
             })
             .catch(err => console.log(err))
@@ -57,6 +69,12 @@ class CheckInForm extends Component {
             hostdetails: e.target.value
         })
     }
+
+
+    componentWillUnmount(){
+       clearInterval(this.intervalId)
+    }
+
     render() {
         console.log(this.state)
         return (
@@ -65,7 +83,7 @@ class CheckInForm extends Component {
             <div className="mainform">
                 
                 <input type = "text" className="text-input" placeholder="Name" value={this.state.Name} onChange={(e)=>this.setState({Name:e.target.value})}></input>
-                <input type = "number" className="text-input" placeholder="Phone"value={this.state.Phone} onChange={(e)=>this.setState({Phone:e.target.value})}></input>
+                <input type = "number" className="text-input" placeholder="Phone" value={this.state.Phone} onChange={(e)=>{var regex=/^[0-9]+$/;if(e.target.value.match(regex)){this.setState({Phone:e.target.value})}}}></input>
                 {/* <input type = "text" className="text-input" placeholder="Check in time"value={this.state.Name} onChange={(e)=>this.setState({CheckInTime:e.value})}></input> */}
                 {/* <input type = "text" className="text-input" placeholder="checkout time"value={this.state.Name} onChange={(e)=>this.setState({CheckOutTime:e.value})}></input> */}
                 {/* <input type = "text" className="text-input" placeholder="Host name"value={this.state.Name} onChange={(e)=>this.setState({HostName:e.value})}></input> */}
